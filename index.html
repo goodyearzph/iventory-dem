@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory System Pro Ver 1.1.2</title>
+    <title>Inventory System Pro Ver 1.2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -12,77 +12,33 @@
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
         .form-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; outline: none; transition: all 0.2s; }
-        .form-input:focus { border-color: #16a34a; ring: 2px; ring-color: #16a34a; }
+        /* Focus color: Green-600 (#16a34a) */
+        .form-input:focus { border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2); }
+        /* Error Input Style */
+        .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
         .tab-btn { padding: 10px; flex: 1; text-align: center; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 600; color: #6b7280; }
+        /* Active tab color: Green-600 */
         .tab-btn.active { border-bottom-color: #16a34a; color: #16a34a; }
         #reader video { object-fit: cover; border-radius: 0.5rem; }
+        /* Scrollbar for suggestions */
         .suggestion-list::-webkit-scrollbar { width: 6px; }
         .suggestion-list::-webkit-scrollbar-track { background: #f1f1f1; }
         .suggestion-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .suggestion-item { padding: 8px 12px; cursor: pointer; transition: background 0.2s; border-bottom: 1px solid #f1f5f9; }
-        .suggestion-item:hover { background-color: #f0fdf4; color: #16a34a; }
-        .suggestion-item:last-child { border-bottom: none; }
-
-        /* ================= PRINT STYLES ================= */
-        @media print {
-            /* ซ่อนทุกอย่างบนหน้าจอ */
-            body * { visibility: hidden; background: none !important; }
-            
-            /* แสดงเฉพาะส่วนที่ต้องการพิมพ์ (สติกเกอร์) */
-            #qrResult, #qrResult *, #stickerLabelSearch, #stickerLabelSearch * { 
-                visibility: visible !important; 
-            }
-
-            /* จัดตำแหน่งสติกเกอร์ให้อยู่บนสุดของหน้ากระดาษ */
-            #qrResult {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: flex !important;
-                justify-content: center;
-                padding: 0;
-                margin: 0;
-            }
-
-            #searchView #searchResultCard {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                border: none !important;
-                box-shadow: none !important;
-                background: white !important;
-            }
-
-            #stickerLabel, #stickerLabelSearch {
-                border: 2px solid #000 !important;
-                padding: 15px !important;
-                width: 250px !important; /* ปรับขนาดสติกเกอร์ตามต้องการ */
-                margin: 0 auto !important;
-                background: white !important;
-                border-radius: 8px;
-            }
-
-            /* ซ่อนปุ่มพิมพ์และส่วนอื่นๆ ภายใต้ขอบเขตที่แสดง */
-            button, .no-print, h1, .tab-btn, form, select, textarea, label {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen flex flex-col items-center p-2 sm:p-4">
 
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden relative mb-20 min-h-[600px] no-print">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden relative mb-20 min-h-[600px]">
         
-        <!-- Header -->
-        <div class="bg-green-600 p-4 flex justify-between items-center">
+        <!-- Header: Green -->
+        <div class="bg-green-600 p-5 flex justify-between items-center">
             <div>
-                <h1 class="text-white text-lg font-bold leading-tight">ระบบลงทะเบียนอุปกรณ์</h1>
-                <p class="text-green-100 text-[10px] opacity-90">QR Code Inventory System (Ver 1.1.2)</p>
+                <h1 class="text-white text-xl font-bold">ระบบลงทะเบียนอุปกรณ์-Salaosot</h1>
+                <p class="text-green-100 text-xs">QR Code Inventory System (Ver 1.2.0)</p>
             </div>
-            <div class="text-white opacity-80 text-xs flex items-center gap-1">
-                <i class="fas fa-check-circle"></i> Online
+            <!-- Status Indicator -->
+            <div class="text-white opacity-80 text-xs">
+                <i class="fas fa-check-circle"></i> พร้อมใช้งาน
             </div>
         </div>
 
@@ -94,39 +50,49 @@
 
         <!-- ================= PAGE 1: REGISTER ================= -->
         <div id="registerView" class="p-6 space-y-4">
-            <p class="text-xs text-gray-600 font-medium text-center bg-blue-50 p-2 rounded border border-blue-100">
-                รูปแบบรหัส: หมวดหมู่-สาขา-วันที่-ลำดับ <br>
-                ตัวอย่าง: <span class="font-bold text-indigo-600">PC102026032301</span>
+            
+            <!-- Instruction Text -->
+            <p class="text-base text-gray-700 font-medium text-center bg-gray-50 p-2 rounded border border-gray-200">
+                วิธีการตั้งรหัส: หมวดหมู่-รหัสสาขา-วันที่ลงทะเบียน-เครื่องที่ <br>
+                ตัวอย่าง: <span class="font-bold text-indigo-600">PC102026012101</span>
             </p>
 
             <form id="itemForm" class="space-y-4">
                 <input type="hidden" name="action" value="register">
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสอุปกรณ์ </label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสอุปกรณ์</label>
                     <div class="flex gap-2">
                         <input type="text" name="Item Code" id="regItemCode" required class="form-input" placeholder="พิมพ์รหัสสินค้า...">
-                        <button type="button" onclick="generateAutoCode()" class="bg-indigo-600 text-white px-4 rounded-lg hover:bg-indigo-700 transition text-sm font-bold whitespace-nowrap shadow-sm flex items-center gap-1">
+                        <button type="button" onclick="generateAutoCode()" class="bg-indigo-50 text-indigo-700 px-4 rounded-lg hover:bg-indigo-100 transition text-sm font-bold whitespace-nowrap border border-indigo-200 shadow-sm flex items-center gap-1">
                             <i class="fas fa-magic"></i> สร้างรหัส
                         </button>
                     </div>
+                    <!-- Duplicate Warning Message -->
+                    <p id="duplicateWarning" class="hidden text-xs text-red-500 mt-1 font-bold">
+                        <i class="fas fa-exclamation-circle"></i> รหัสนี้มีอยู่ในระบบแล้ว กรุณาใช้รหัสอื่น
+                    </p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="relative">
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">ชื่ออุปกรณ์</label>
-                        <input type="text" name="Item Name" id="regItemName" required class="form-input w-full" placeholder="พิมพ์ชื่ออุปกรณ์..." autocomplete="off">
-                        <div id="regNameSuggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-48 overflow-y-auto suggestion-list"></div>
+                        <div class="relative">
+                            <input type="text" name="Item Name" id="regItemName" required class="form-input w-full" placeholder="ชื่อสินค้า" autocomplete="off">
+                            <div id="regNameSuggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-60 overflow-y-auto suggestion-list">
+                                <!-- Suggestions injected here -->
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่</label>
-                        <select name="Category" id="regCategory" class="form-input bg-white">
+                        <select name="Category" class="form-input bg-white">
                             <option value="คอมพิวเตอร์">PC-คอมพิวเตอร์</option>
                             <option value="ปริ้นเตอร์/เครื่องพิมพ์ฉลาก">PT-ปริ้นเตอร์/เครื่องพิมพ์ฉลาก</option>
                             <option value="โทรศัพท์/แทปเลต">PH-โทรศัพท์/แทปเลต</option>
                             <option value="อุปกรณ์พ่วงคอมพิวเตอร์อื่นๆ">EP-อุปกรณ์พ่วงคอมพิวเตอร์อื่นๆ</option>
                             <option value="อุปกรณ์อิเลคทรอนิกส์อื่นๆ">EE-อุปกรณ์อิเลคทรอนิกส์อื่นๆ</option>
                             <option value="กล้องวงจรปิด">CA-กล้องวงจรปิด</option>
-                            <option value="เครื่องใช้ไฟฟ้าในสำนักงาน">OF-เครื่องใช้ไฟฟ้าในสำนักงาน</option>
                         </select>
                     </div>
                 </div>
@@ -134,18 +100,22 @@
                 <div class="grid grid-cols-3 gap-2">
                     <div><label class="text-xs text-gray-500">เครื่องที่</label><input type="text" name="MachineNo" id="regMachineNo" class="form-input" placeholder="เช่น 1"></div>
                     <div><label class="text-xs text-gray-500">หมดประกัน</label><input type="date" name="WarrantyDate" class="form-input text-sm"></div>
+                    <!-- Branch Autocomplete -->
                     <div>
                         <label class="text-xs text-gray-500">สาขา</label>
                         <div class="relative">
                             <input type="text" name="Branch" id="regBranch" class="form-input w-full" placeholder="เลือกสาขา..." autocomplete="off">
-                            <div id="regBranchSuggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-48 overflow-y-auto suggestion-list"></div>
+                            <div id="branchSuggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-60 overflow-y-auto suggestion-list">
+                                <!-- Suggestions injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Spec Field -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">สเปค / รายละเอียด</label>
-                    <textarea name="Spec" id="regSpec" rows="2" class="form-input" placeholder="CPU, RAM, HDD..."></textarea>
+                    <textarea name="Spec" id="regSpec" rows="2" class="form-input" placeholder="เช่น CPU i5, RAM 8GB..."></textarea>
                 </div>
 
                 <div>
@@ -153,19 +123,23 @@
                     <textarea name="Note" id="regNote" rows="2" class="form-input" placeholder="-"></textarea>
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow mt-2 transition">
+                <button type="submit" id="submitBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow mt-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="fas fa-save mr-2"></i> บันทึกข้อมูล
                 </button>
             </form>
 
+            <!-- QR Result Section -->
             <div id="qrResult" class="hidden mt-6 flex flex-col items-center">
-                <!-- ส่วนที่ใช้พิมพ์สติกเกอร์ -->
-                <div id="stickerLabel" class="bg-white p-4 border-2 border-gray-800 rounded-lg text-center shadow-sm w-64 box-border">
-                    <p id="qrNameText" class="font-bold text-lg text-gray-900 mb-2 break-words leading-tight"></p>
-                    <div id="qrcode" class="flex justify-center mb-2"></div>
-                    <p id="qrCodeText" class="font-mono text-md text-gray-800 font-semibold tracking-wide bg-gray-100 rounded px-2 inline-block"></p>
+                <div class="text-center mb-2 text-sm text-gray-500">บันทึกสำเร็จ! พร้อมพิมพ์</div>
+                
+                <!-- Sticker Layout -->
+                <div id="stickerLabel" class="bg-white p-2 border border-gray-800 rounded-lg text-center shadow-sm box-border flex flex-col justify-center items-center mx-auto" style="width: 120px;">
+                    <p id="qrNameText" class="font-bold text-sm text-gray-900 mb-1 break-words leading-tight w-full"></p>
+                    <div id="qrcode" class="flex justify-center mb-1"></div>
+                    <p id="qrCodeText" class="font-sans text-[10px] text-gray-800 font-semibold tracking-wide inline-block w-full"></p>
                 </div>
-                <button onclick="window.print()" class="no-print mt-4 bg-white border border-green-600 text-green-600 hover:bg-green-50 font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
+
+                <button onclick="printBarcode()" class="mt-4 bg-white border border-green-600 text-green-600 hover:bg-green-50 font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
                     <i class="fas fa-print"></i> พิมพ์ QR Code
                 </button>
             </div>
@@ -174,66 +148,112 @@
         <!-- ================= PAGE 2: SEARCH & UPDATE ================= -->
         <div id="searchView" class="hidden p-6 space-y-4">
             
+            <!-- Tools Bar -->
             <div class="flex justify-between items-center mb-2">
-                <span class="text-[10px] text-gray-500" id="dataStatus">สถานะ: รอโหลด...</span>
-                <button onclick="loadAllDataForSearch(true)" class="text-[10px] text-green-600 hover:text-green-800 underline">
-                    <i class="fas fa-sync-alt"></i> อัปเดตข้อมูล
+                <span class="text-xs text-gray-500" id="dataStatus">สถานะ: รอโหลด...</span>
+                <button onclick="loadAllDataForSearch(true)" class="text-xs text-green-600 hover:text-green-800 underline">
+                    <i class="fas fa-sync-alt"></i> รีเฟรชข้อมูล
                 </button>
             </div>
 
-            <!-- Main Search -->
+            <!-- Branch Filter -->
+            <div class="mb-4">
+                <select id="searchBranchFilter" onchange="filterByBranch()" class="form-input w-full bg-white text-sm text-gray-700 font-medium cursor-pointer border-gray-300">
+                    <option value="">-- เรียกดูอุปกรณ์ทั้งหมดตามสาขา --</option>
+                </select>
+            </div>
+
+            <!-- Search Controls with Autocomplete -->
             <div class="flex gap-2 mb-4 relative">
                 <div class="relative flex-grow">
                     <input type="text" id="searchInput" placeholder="พิมพ์รหัสหรือชื่อ..." class="form-input w-full" autocomplete="off">
-                    <div id="searchSuggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-60 overflow-y-auto suggestion-list"></div>
+                    <!-- Suggestion Dropdown -->
+                    <div id="searchSuggestions" class="hidden absolute top-full left-0 w-full bg-white border border-gray-200 rounded-b-lg shadow-xl z-50 max-h-60 overflow-y-auto suggestion-list">
+                        <!-- Items will be injected here -->
+                    </div>
                 </div>
+                <!-- Manual Search Button -->
                 <button onclick="manualSearch()" class="bg-gray-200 px-4 rounded-lg text-gray-600 hover:bg-gray-300"><i class="fas fa-search"></i></button>
                 <button onclick="startScanner()" class="bg-green-600 px-4 rounded-lg text-white shadow hover:bg-green-700"><i class="fas fa-camera"></i></button>
             </div>
 
+            <!-- Scanner Area -->
             <div id="scannerContainer" class="hidden mb-4 relative bg-black rounded-lg overflow-hidden">
                 <div id="reader" class="w-full h-64"></div>
-                <button onclick="stopScanner()" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full text-xs shadow">ปิดกล้อง</button>
+                <button onclick="stopScanner()" class="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full text-xs shadow hover:bg-red-600">ปิดกล้อง</button>
+                <p class="text-white text-center text-xs py-2 bg-gray-800">ส่องกล้องไปที่ QR Code</p>
             </div>
 
-            <!-- Result Card -->
+            <!-- Multi-Result Container for Branch Filter -->
+            <div id="multiResultContainer" class="hidden flex-col gap-2 mb-4 max-h-96 overflow-y-auto pr-1"></div>
+
+            <!-- Search Result Card -->
             <div id="searchResultCard" class="hidden bg-white border border-gray-200 rounded-xl shadow-sm p-5 relative">
+                <div class="absolute top-0 right-0 p-3">
+                    <span id="resStatus" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">พบข้อมูล</span>
+                </div>
+                
                 <h3 id="resName" class="text-lg font-bold text-gray-800 mb-1">ชื่ออุปกรณ์</h3>
-                <p id="resCode" class="text-sm text-gray-500 font-mono mb-4">รหัส: ---</p>
+                <p id="resCode" class="text-sm text-gray-500 font-mono mb-4">SKU: ---</p>
 
                 <div class="grid grid-cols-2 gap-4 text-sm mb-4">
-                    <div><span class="block text-gray-400 text-[10px]">หมวดหมู่</span><span id="resCategory" class="font-medium">-</span></div>
-                    <div><span class="block text-gray-400 text-[10px]">สาขา</span><span id="resBranch" class="font-medium">-</span></div>
-                    <div><span class="block text-gray-400 text-[10px]">เครื่องที่</span><span id="resMachineNo" class="font-medium text-green-600 text-lg">-</span></div>
-                    <div><span class="block text-gray-400 text-[10px]">หมดประกัน</span><span id="resWarrantyDate" class="font-medium">-</span></div>
+                    <div>
+                        <span class="block text-gray-400 text-xs">หมวดหมู่</span>
+                        <span id="resCategory" class="font-medium">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 text-xs">สาขา</span>
+                        <span id="resBranch" class="font-medium">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 text-xs">เครื่องที่</span>
+                        <span id="resMachineNo" class="font-medium text-green-600 text-lg">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 text-xs">หมดประกัน</span>
+                        <span id="resWarrantyDate" class="font-medium">-</span>
+                    </div>
+                    <!-- Timestamp -->
+                    <div class="col-span-2 border-t border-dashed pt-2 mt-1">
+                        <span class="block text-gray-400 text-xs">วันเวลาที่บันทึก</span>
+                        <span id="resTimestamp" class="font-medium text-gray-600 text-xs">-</span>
+                    </div>
                 </div>
 
-                <!-- Sticker Box for Search View -->
-                <div class="flex flex-col items-center mb-4 pt-4 border-t border-gray-100 bg-gray-50 p-4 rounded-lg">
-                    <div id="stickerLabelSearch" class="bg-white p-4 border-2 border-gray-800 rounded-lg text-center shadow-sm w-56 box-border">
-                        <p id="resQrName" class="font-bold text-base text-gray-900 mb-2 break-words leading-tight"></p>
-                        <div id="resQrcode" class="flex justify-center mb-2"></div>
-                        <p id="resQrCode" class="font-mono text-sm text-gray-800 font-semibold tracking-wide bg-gray-100 rounded px-2 inline-block"></p>
+                <!-- QR Code Section for Search Result -->
+                <div class="flex flex-col items-center mt-4 mb-4 pt-4 border-t border-gray-100 bg-gray-50 p-4 rounded-lg">
+                    <div id="stickerLabelSearch" class="bg-white p-2 border border-gray-800 rounded-lg text-center shadow-sm box-border flex flex-col justify-center items-center mx-auto" style="width: 120px;">
+                        <p id="resQrName" class="font-bold text-sm text-gray-900 mb-1 break-words leading-tight w-full"></p>
+                        <div id="resQrcode" class="flex justify-center mb-1"></div>
+                        <p id="resQrCode" class="font-sans text-[10px] text-gray-800 font-semibold tracking-wide inline-block w-full"></p>
                     </div>
-                    <button onclick="window.print()" class="no-print mt-3 text-xs bg-white border border-indigo-500 text-indigo-500 hover:bg-indigo-50 font-bold py-1 px-3 rounded shadow transition flex items-center gap-2">
-                        <i class="fas fa-print"></i> พิมพ์ QR สติกเกอร์
+                    <button onclick="printBarcodeSearch()" class="mt-3 bg-white border border-green-600 text-green-600 hover:bg-green-50 font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
+                        <i class="fas fa-print"></i> พิมพ์ QR Code
                     </button>
                 </div>
 
-                <div class="border-t pt-4 no-print">
-                    <label class="block text-[10px] font-bold text-gray-700 mb-1 uppercase">สเปค / รายละเอียด</label>
-                    <textarea id="resSpec" rows="2" class="form-input bg-yellow-50 border-yellow-200 w-full mb-2 text-sm" placeholder="แก้ไขสเปค..."></textarea>
-                    <label class="block text-[10px] font-bold text-gray-700 mb-1 uppercase">บันทึกเพิ่มเติม</label>
-                    <textarea id="resNote" rows="2" class="form-input bg-yellow-50 border-yellow-200 w-full text-sm" placeholder="เพิ่มหมายเหตุ..."></textarea>
-                    <button onclick="triggerUpdateWithPin()" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg shadow text-sm transition">
-                        <i class="fas fa-edit mr-1"></i> บันทึกการแก้ไข
+                <!-- Update Note & Spec Section -->
+                <div class="border-t pt-4">
+                    <label class="block text-xs font-bold text-gray-700 mb-1">สเปค / รายละเอียด</label>
+                    <textarea id="resSpec" rows="2" class="form-input bg-yellow-50 border-yellow-200 focus:border-yellow-400 w-full mb-2" placeholder="แก้ไขสเปค..."></textarea>
+
+                    <label class="block text-xs font-bold text-gray-700 mb-1">แก้ไขหมายเหตุ / บันทึกเพิ่มเติม</label>
+                    <div class="relative">
+                        <textarea id="resNote" rows="3" class="form-input bg-yellow-50 border-yellow-200 focus:border-yellow-400 w-full" placeholder="เพิ่มหมายเหตุที่นี่..."></textarea>
+                    </div>
+                    
+                    <!-- Modified Button triggers PIN Modal -->
+                    <button onclick="triggerUpdateWithPin()" id="updateBtn" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg shadow text-sm transition flex justify-center items-center gap-2">
+                        <span>บันทึกการแก้ไข (สเปค & หมายเหตุ)</span>
+                        <i class="fas fa-edit"></i>
                     </button>
                 </div>
             </div>
 
+            <!-- Not Found State -->
             <div id="notFoundMsg" class="hidden text-center py-10 text-gray-400">
                 <i class="fas fa-box-open text-4xl mb-2"></i>
-                <p>ไม่พบข้อมูล</p>
+                <p>ไม่พบข้อมูลสินค้านี้</p>
             </div>
             
             <div id="loadingMsg" class="hidden text-center py-10 text-gray-500">
@@ -241,251 +261,738 @@
                 <p>กำลังค้นหา...</p>
             </div>
         </div>
+
     </div>
 
-    <!-- PIN Modal -->
-    <div id="pinModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm no-print">
-        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-xs text-center">
-            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-lock text-green-600 text-xl"></i></div>
-            <h3 class="text-lg font-bold text-gray-800 mb-1">ยืนยันการบันทึก</h3>
-            <p class="text-xs text-gray-500 mb-4">กรุณากรอกรหัส PIN 6 หลัก</p>
-            <input type="tel" id="pinInput" class="form-input text-center text-2xl tracking-widest font-bold mb-4 border-gray-300" placeholder="••••••" maxlength="6">
+    <!-- Footer / Copyright -->
+    <div class="w-full max-w-lg text-center text-xs text-gray-400 mt-2 mb-6">
+        <p>&copy; 2026 Salaosot. All rights reserved.</p>
+        <p class="mt-1">ระบบจัดการอุปกรณ์อิเลคทรอนิกส์ (Salaosot Inventory) Ver 1.2.0</p>
+        <p class="mt-1"><i class="fas fa-headset mr-1"></i> หากพบปัญหาการใช้งานติดต่อ: ฝ่าย IT/ภก.ปาล์ม</p>
+    </div>
+
+    <!-- PIN Confirmation Modal -->
+    <div id="pinModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-xs text-center transform transition-all scale-100">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-lock text-green-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-1">ยืนยันการแก้ไข</h3>
+            <p class="text-xs text-gray-500 mb-4">กรุณาใส่รหัส PIN เพื่อบันทึก</p>
+            
+            <input type="password" id="pinInput" class="form-input text-center text-2xl tracking-widest font-bold mb-4 border-gray-300 focus:border-green-500" placeholder="• • • • • •" maxlength="6">
+            
             <div class="flex gap-2">
-                <button onclick="closePinModal()" class="flex-1 bg-gray-100 py-2 rounded-lg font-medium text-sm">ยกเลิก</button>
-                <button onclick="confirmPin()" class="flex-1 bg-green-600 text-white py-2 rounded-lg font-medium text-sm shadow">ตกลง</button>
+                <button onclick="closePinModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg font-medium text-sm transition">ยกเลิก</button>
+                <button onclick="confirmPin()" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium text-sm shadow transition">ยืนยัน</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg text-sm hidden z-50"></div>
+    <!-- Status Toast -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg text-sm hidden z-50 transition-opacity duration-300 pointer-events-none">
+        Message
+    </div>
 
     <script>
+        // --- CONSTANTS ---
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxr_xjXz_E6CLGKbLAMv6hI8u_LIwHTHb-NcIPZtdG-lAymJrgKYneAhq05H9Dazt-gQA/exec";
         
+        // Static Branch Data
         const BRANCH_LIST = [
-            "00คลังรีเทล", "01 นายายอาม", "02 เขาชะเมา", "03 แก่งหางแมว", "04 สระแก้ว", "05 เมืองใหม่นายอาม", 
+            "01 คลังรีเทล", "02 เขาชะเมา", "03 แก่งหางแมว", "04 สระแก้ว", "05 เมืองใหม่นายอาม", 
             "06 เขาไร่ยา", "07 แสนตุ้ง", "08 เขาดิน", "09 สอยดาว", "10 ตลาดเจริญสุข", 
             "11 โป่งน้ำร้อน", "12 ทับช้าง", "13 วังสมบูรณ์", "14 ทุ่งขนาน", "15 ตราด", 
             "16 ออฟฟิศ", "17 นายายอาม", "18 คลองหาด", "19 วังน้ำเย็น", "20 เกาะลอย", 
             "21 เจ้าหลาว", "23 อรัญประเทศ", "24 บิ๊กซีจันทบุรี", "25 แกลง", "26 ตาพระยา", 
-            "27 โกกสูง", "28 ขลุง", "29 พลับพลา", "30 วังน้ำเย็น2 ", "31 ตลาดเทศบาลตราด", "32 ตลาดพลิ้ว", 
+            "27 โคกสูง", "28 ขลุง", "29 พลับพลา", "30 วังน้ำเย็น2 ", "31 ตลาดเทศบาลตราด", "32 ตลาดพลิ้ว", 
             "33 เขาฉกรรจ์", "99ศรีชัยโอสถ"
         ];
 
-        let inventoryCache = []; 
+        // --- Variables ---
         let html5QrcodeScanner = null;
+        let inventoryCache = []; 
         let isScannerRunning = false; 
         let onPinSuccess = null;
+        let currentUpdateCode = "";
 
+        // Initialize Branch Filter Dropdown
+        function initBranchFilter() {
+            const filter = document.getElementById('searchBranchFilter');
+            if (filter) {
+                BRANCH_LIST.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b;
+                    opt.textContent = b;
+                    filter.appendChild(opt);
+                });
+            }
+        }
+
+        // LOAD DATA ON STARTUP
+        initBranchFilter();
         loadAllDataForSearch();
 
-        window.onload = () => {
-            const bf = document.getElementById('branchFilter');
-            if (bf) BRANCH_LIST.forEach(b => bf.add(new Option(b, b)));
+        // --- Toast Function ---
+        function showToast(message, color = "gray") {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            
+            toast.className = `fixed bottom-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full shadow-lg text-sm z-50 transition-opacity duration-300 pointer-events-none`;
+            
+            if(color === "green") toast.classList.add("bg-green-600", "text-white");
+            else if(color === "red") toast.classList.add("bg-red-600", "text-white");
+            else toast.classList.add("bg-gray-800", "text-white");
 
-            const regBranchInput = document.getElementById('regBranch');
-            const regBranchSuggestions = document.getElementById('regBranchSuggestions');
-
-            regBranchInput.addEventListener('input', () => {
-                const val = regBranchInput.value.trim().toLowerCase();
-                const filtered = BRANCH_LIST.filter(b => b.toLowerCase().includes(val));
-                renderSuggestions('regBranchSuggestions', filtered, (v) => regBranchInput.value = v);
-            });
-
-            const regItemNameInput = document.getElementById('regItemName');
-            const regNameSuggestions = document.getElementById('regNameSuggestions');
-
-            regItemNameInput.addEventListener('input', () => {
-                const val = regItemNameInput.value.trim().toLowerCase();
-                if (!val) { regNameSuggestions.classList.add('hidden'); return; }
-                const uniqueNames = [...new Set(inventoryCache.map(item => item['Item Name']))];
-                const filtered = uniqueNames.filter(name => String(name).toLowerCase().includes(val)).slice(0, 10);
-                if (filtered.length > 0) {
-                    regNameSuggestions.innerHTML = filtered.map(name => `<div class="suggestion-item text-sm font-medium text-gray-700" onclick="selectRegName('${name}')"><i class="fas fa-history mr-2 text-gray-300 text-xs"></i>${name}</div>`).join('');
-                    regNameSuggestions.classList.remove('hidden');
-                } else { regNameSuggestions.classList.add('hidden'); }
-            });
-
-            const searchInput = document.getElementById('searchInput');
-            const searchSuggestions = document.getElementById('searchSuggestions');
-            searchInput.addEventListener('input', () => {
-                const val = searchInput.value.trim().toLowerCase();
-                if (!val) { searchSuggestions.classList.add('hidden'); return; }
-                const filtered = inventoryCache.filter(item => String(item['Item Code']).toLowerCase().includes(val) || String(item['Item Name']).toLowerCase().includes(val)).slice(0, 15);
-                renderSearchSuggestions(filtered);
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.relative')) {
-                    document.getElementById('regBranchSuggestions').classList.add('hidden');
-                    document.getElementById('regNameSuggestions').classList.add('hidden');
-                    document.getElementById('searchSuggestions').classList.add('hidden');
-                }
-            });
-        };
-
-        function selectRegName(name) {
-            document.getElementById('regItemName').value = name;
-            document.getElementById('regNameSuggestions').classList.add('hidden');
-            const existingItem = inventoryCache.find(item => item['Item Name'] === name);
-            if (existingItem && existingItem['Category']) document.getElementById('regCategory').value = existingItem['Category'];
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
         }
 
-        function renderSuggestions(id, list, onSelect) {
-            const container = document.getElementById(id);
-            if (list.length === 0) { container.classList.add('hidden'); return; }
-            container.innerHTML = list.map(b => `<div class="suggestion-item text-sm" onclick="this.parentElement.classList.add('hidden');">${b}</div>`).join('');
-            container.querySelectorAll('.suggestion-item').forEach((item, index) => {
-                item.addEventListener('click', () => { onSelect(list[index]); container.classList.add('hidden'); });
-            });
-            container.classList.remove('hidden');
-        }
-
-        function renderSearchSuggestions(list) {
-            const container = document.getElementById('searchSuggestions');
-            if (list.length === 0) { container.classList.add('hidden'); return; }
-            container.innerHTML = list.map(item => `<div class="suggestion-item flex justify-between items-center text-sm gap-2" onclick="selectSearchItem('${item['Item Code']}')"><div class="flex flex-col"><span class="font-bold text-gray-800">${item['Item Name']}</span><span class="text-[10px] text-gray-500">${item['Branch'] || 'ไม่ระบุสาขา'}</span></div><span class="font-mono text-xs bg-indigo-50 text-indigo-600 px-1 rounded border border-indigo-100">${item['Item Code']}</span></div>`).join('');
-            container.classList.remove('hidden');
-        }
-
-        function selectSearchItem(code) {
-            document.getElementById('searchInput').value = code;
-            document.getElementById('searchSuggestions').classList.add('hidden');
-            findItem(code);
-        }
-
+        // --- Tabs Logic ---
         function switchTab(tab) {
-            ['register', 'search'].forEach(v => {
+            const views = ['register', 'search'];
+            views.forEach(v => {
                 document.getElementById(v + 'View').classList.add('hidden');
-                document.getElementById('tab' + (v.charAt(0).toUpperCase() + v.slice(1))).classList.remove('active');
+                const tabEl = document.getElementById('tab' + (v.charAt(0).toUpperCase() + v.slice(1)));
+                if(tabEl) tabEl.classList.remove('active');
             });
+            
             document.getElementById(tab + 'View').classList.remove('hidden');
-            document.getElementById('tab' + (tab.charAt(0).toUpperCase() + tab.slice(1))).classList.add('active');
+            const activeTab = document.getElementById('tab' + (tab.charAt(0).toUpperCase() + tab.slice(1)));
+            if(activeTab) activeTab.classList.add('active');
+
+            if(tab === 'search') {
+                if(inventoryCache.length === 0) {
+                    loadAllDataForSearch();
+                }
+            }
             stopScanner(); 
         }
 
+        // --- Feature 1: Register ---
+        
         function generateAutoCode() {
-            const catVal = document.getElementById('regCategory').value;
-            let catPrefix = "EQ";
-            if (catVal.includes("คอมพิวเตอร์")) catPrefix = "PC";
-            else if (catVal.includes("ปริ้นเตอร์")) catPrefix = "PT";
-            else if (catVal.includes("โทรศัพท์")) catPrefix = "PH";
-            else if (catVal.includes("เครื่องใช้ไฟฟ้า")) catPrefix = "OF";
-            else if (catVal.includes("กล้อง")) catPrefix = "CA";
+            const catSelect = document.querySelector('select[name="Category"]');
+            const catText = catSelect.options[catSelect.selectedIndex].text; 
+            const prefix = catText.split('-')[0];
+
             const branchText = document.getElementById('regBranch').value.trim();
-            if (!branchText) { showToast("กรุณาเลือกสาขา", "red"); return; }
-            const branchCode = branchText.substring(0, 2).padStart(2, '0');
-            const dateStr = new Date().toISOString().slice(0,10).replace(/-/g, '');
-            const mNo = (document.getElementById('regMachineNo').value || "1").padStart(2, '0');
-            document.getElementById('regItemCode').value = `${catPrefix}${branchCode}${dateStr}${mNo}`;
+            if (!branchText) {
+                showToast("กรุณาเลือกสาขาก่อนสร้างรหัสอัตโนมัติ", "red");
+                document.getElementById('regBranch').focus();
+                return;
+            }
+            let branchCode = branchText.substring(0, 2);
+            if (!/^\d{2}$/.test(branchCode)) {
+                branchCode = "00"; 
+            }
+
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const dateStr = `${yyyy}${mm}${dd}`;
+
+            const machineInput = document.getElementById('regMachineNo');
+            let machineNoStr = machineInput.value.trim();
+            if (!machineNoStr) {
+                 machineNoStr = "1";
+                 machineInput.value = "1";
+            }
+            const paddedMachineNo = machineNoStr.padStart(2, '0');
+
+            const autoCode = `${prefix}${branchCode}${dateStr}${paddedMachineNo}`;
+            
+            const codeInput = document.getElementById('regItemCode');
+            codeInput.value = autoCode;
+            
+            codeInput.dispatchEvent(new Event('input'));
+            showToast("สร้างรหัสอัตโนมัติสำเร็จ", "green");
         }
 
-        async function loadAllDataForSearch(manual = false) {
-            document.getElementById('dataStatus').innerText = "สถานะ: กำลังโหลด...";
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const json = await res.json();
-                if(json.result === 'success') {
-                    inventoryCache = json.data; 
-                    document.getElementById('dataStatus').innerText = `สถานะ: ออนไลน์ (${inventoryCache.length} รายการ)`;
-                    if(manual) showToast("อัปเดตข้อมูลแล้ว", "green");
-                }
-            } catch(e) { document.getElementById('dataStatus').innerText = "สถานะ: ออฟไลน์"; }
-        }
+        const regItemCodeInput = document.getElementById('regItemCode');
+        const duplicateWarning = document.getElementById('duplicateWarning');
+        const submitBtn = document.getElementById('submitBtn');
 
-        function showToast(msg, color="gray") {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.className = `fixed bottom-5 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-lg text-sm z-50 text-white ${color === 'green' ? 'bg-green-600' : (color === 'red' ? 'bg-red-600' : 'bg-gray-800')}`;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('hidden'), 2500);
-        }
+        regItemCodeInput.addEventListener('input', function(e) {
+            const val = e.target.value.trim();
+            if(!val) {
+                duplicateWarning.classList.add('hidden');
+                regItemCodeInput.classList.remove('error');
+                submitBtn.disabled = false;
+                return;
+            }
 
-        document.getElementById('itemForm').onsubmit = async (e) => {
+            const isDuplicate = inventoryCache.some(item => String(item['Item Code']).trim() === val);
+
+            if (isDuplicate) {
+                duplicateWarning.classList.remove('hidden');
+                regItemCodeInput.classList.add('error');
+                submitBtn.disabled = true; 
+            } else {
+                duplicateWarning.classList.add('hidden');
+                regItemCodeInput.classList.remove('error');
+                submitBtn.disabled = false; 
+            }
+        });
+
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const data = new URLSearchParams(new FormData(e.target));
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: data });
-                const json = await res.json();
-                if(json.result === 'success') {
-                    showToast("บันทึกสำเร็จ", "green");
-                    const code = document.getElementById('regItemCode').value;
-                    const name = document.getElementById('regItemName').value;
-                    const c = document.getElementById('qrcode');
-                    c.innerHTML = "";
-                    new QRCode(c, { text: code, width: 150, height: 150 });
-                    document.getElementById('qrCodeText').innerText = code;
-                    document.getElementById('qrNameText').innerText = name;
-                    document.getElementById('qrResult').classList.remove('hidden');
-                    e.target.reset();
-                    loadAllDataForSearch();
-                }
-            } catch(err) { showToast("เกิดข้อผิดพลาด", "red"); }
-            btn.disabled = false;
-        };
+            
+            const formData = new FormData(e.target);
+            const data = new URLSearchParams();
+            for (const pair of formData) data.append(pair[0], pair[1]);
+            if(!data.has('action')) data.append('action', 'register');
 
-        function findItem(code) {
-            document.getElementById('loadingMsg').classList.remove('hidden');
+            // บันทึกข้อมูลทันทีโดยไม่ต้องผ่าน Modal PIN
+            submitRegistration(data);
+        });
+
+        async function submitRegistration(data) {
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+            
+            const codeVal = document.getElementById('regItemCode').value.trim();
+            if (inventoryCache.some(item => String(item['Item Code']).trim() === codeVal)) {
+                showToast("รหัสนี้มีอยู่แล้ว ไม่สามารถบันทึกได้", "red");
+                return;
+            }
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            const itemName = document.getElementById('regItemName').value;
+
+            try {
+                // ส่งข้อมูลไปยัง Google Sheet ของจริง
+                const res = await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: data
+                });
+                const json = await res.json();
+                
+                if(json.result === 'success') {
+                    showToast("บันทึกสำเร็จ!", "green");
+                    generateQR(document.getElementById('regItemCode').value, itemName);
+                    
+                    // Add to local cache for instant search availability
+                    const newItem = {};
+                    for(const [key, value] of data.entries()) {
+                        newItem[key] = value;
+                    }
+                    newItem['Timestamp'] = new Date().toLocaleString('th-TH');
+                    inventoryCache.push(newItem);
+
+                    document.getElementById('itemForm').reset();
+                    document.getElementById('dataStatus').innerText = "สถานะ: อัปเดตข้อมูลแล้ว";
+                } else {
+                    throw new Error(json.error || "Unknown Error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("เกิดข้อผิดพลาด: " + err.message, "red");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function generateQR(code, name) {
+            const container = document.getElementById('qrcode');
+            container.innerHTML = "";
+            // ปรับขนาด QR Code บนหน้าจอให้พอดีกับกรอบ 3x5
+            new QRCode(container, { text: code, width: 90, height: 90 });
+            
+            document.getElementById('qrCodeText').innerText = code;
+            document.getElementById('qrNameText').innerText = name || ""; 
+            
+            document.getElementById('qrResult').classList.remove('hidden');
+        }
+
+        // --- Feature 2: Search & Update & Autocomplete ---
+        async function loadAllDataForSearch(manual = false) {
+            if(manual) showToast("กำลังดึงข้อมูลล่าสุด...");
+            document.getElementById('dataStatus').innerText = "สถานะ: กำลังโหลด...";
+
+            try {
+                // ดึงข้อมูลจาก Google Sheet ของจริง
+                const res = await fetch(SCRIPT_URL + "?action=getData");
+                const json = await res.json();
+                
+                // รองรับทั้งกรณีที่ Apps Script ส่งกลับมาเป็น Array ตรงๆ หรืออยู่ใน key 'data'
+                if (json && Array.isArray(json)) {
+                    inventoryCache = json;
+                } else if (json && Array.isArray(json.data)) {
+                    inventoryCache = json.data;
+                } else {
+                    inventoryCache = [];
+                }
+
+                document.getElementById('dataStatus').innerText = `สถานะ: พร้อมใช้งาน (${inventoryCache.length} รายการ)`;
+                if(manual) showToast("อัปเดตข้อมูลเรียบร้อย!", "green");
+
+            } catch(e) { 
+                console.error("Load failed", e);
+                document.getElementById('dataStatus').innerText = "สถานะ: โหลดไม่สำเร็จ (กรุณาตรวจสอบ Apps Script)";
+            }
+        }
+
+        // --- REG NAME Autocomplete Logic ---
+        const regNameInput = document.getElementById('regItemName');
+        const regNameSuggestions = document.getElementById('regNameSuggestions');
+
+        regNameInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            if (!val) {
+                regNameSuggestions.classList.add('hidden');
+                return;
+            }
+            const uniqueNames = [...new Set(inventoryCache.map(i => i['Item Name']).filter(n => n && String(n).trim() !== ''))];
+            const matches = uniqueNames.filter(name => name.toLowerCase().includes(val)).slice(0, 10);
+
+            if (matches.length > 0) {
+                regNameSuggestions.innerHTML = matches.map(name => `
+                    <div onclick="selectRegName('${name}')" class="p-3 border-b hover:bg-gray-50 cursor-pointer text-sm">
+                        ${name}
+                    </div>
+                `).join('');
+                regNameSuggestions.classList.remove('hidden');
+            } else {
+                regNameSuggestions.classList.add('hidden');
+            }
+        });
+
+        function selectRegName(name) {
+            regNameInput.value = name;
+            regNameSuggestions.classList.add('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!regNameInput.contains(e.target) && !regNameSuggestions.contains(e.target)) {
+                regNameSuggestions.classList.add('hidden');
+            }
+        });
+
+        // --- BRANCH Autocomplete Logic ---
+        const regBranchInput = document.getElementById('regBranch');
+        const branchSuggestions = document.getElementById('branchSuggestions');
+
+        regBranchInput.addEventListener('click', () => {
+            renderBranchSuggestions(regBranchInput.value);
+        });
+
+        regBranchInput.addEventListener('input', (e) => {
+            renderBranchSuggestions(e.target.value);
+        });
+
+        function renderBranchSuggestions(val) {
+            val = val.toLowerCase().trim();
+            const matches = BRANCH_LIST.filter(branch => branch.toLowerCase().includes(val));
+
+            if (matches.length > 0) {
+                branchSuggestions.innerHTML = matches.map(branch => `
+                    <div onclick="selectBranch('${branch}')" class="p-2 border-b hover:bg-gray-50 cursor-pointer text-sm">
+                        ${branch}
+                    </div>
+                `).join('');
+                branchSuggestions.classList.remove('hidden');
+            } else {
+                branchSuggestions.classList.add('hidden');
+            }
+        }
+
+        function selectBranch(branch) {
+            regBranchInput.value = branch;
+            branchSuggestions.classList.add('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!regBranchInput.contains(e.target) && !branchSuggestions.contains(e.target)) {
+                branchSuggestions.classList.add('hidden');
+            }
+        });
+
+        // --- Search Autocomplete Logic ---
+        const searchInput = document.getElementById('searchInput');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            if (!val) {
+                searchSuggestions.classList.add('hidden');
+                return;
+            }
+
+            const matches = inventoryCache.filter(item => {
+                const code = String(item['Item Code'] || '').toLowerCase();
+                const name = String(item['Item Name'] || '').toLowerCase();
+                return code.includes(val) || name.includes(val);
+            }).slice(0, 10); 
+
+            if (matches.length > 0) {
+                searchSuggestions.innerHTML = matches.map(item => `
+                    <div onclick="selectSuggestion('${item['Item Code']}')" class="p-3 border-b hover:bg-gray-50 cursor-pointer transition flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-sm text-gray-800">${item['Item Code']}</p>
+                            <p class="text-xs text-gray-500">${item['Item Name']}</p>
+                        </div>
+                    </div>
+                `).join('');
+                searchSuggestions.classList.remove('hidden');
+            } else {
+                searchSuggestions.classList.add('hidden');
+            }
+        });
+
+        function selectSuggestion(code) {
+            searchInput.value = code;
+            searchSuggestions.classList.add('hidden');
+            manualSearch();
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                searchSuggestions.classList.add('hidden');
+            }
+        });
+
+        function manualSearch() {
+            const term = searchInput.value.trim().toLowerCase();
+            if(!term) return;
+
+            // Reset Branch Filter if using manual search
+            document.getElementById('searchBranchFilter').value = "";
+            document.getElementById('multiResultContainer').classList.add('hidden');
+            document.getElementById('multiResultContainer').classList.remove('flex');
+
             document.getElementById('searchResultCard').classList.add('hidden');
             document.getElementById('notFoundMsg').classList.add('hidden');
-            const item = inventoryCache.find(r => String(r['Item Code']).toLowerCase() === String(code).toLowerCase());
+            document.getElementById('loadingMsg').classList.remove('hidden');
+
             setTimeout(() => {
+                const result = inventoryCache.find(item => 
+                    String(item['Item Code']).toLowerCase() === term || 
+                    String(item['Item Name']).toLowerCase() === term
+                );
+
                 document.getElementById('loadingMsg').classList.add('hidden');
-                if (item) {
-                    document.getElementById('resName').innerText = item['Item Name'];
-                    document.getElementById('resCode').innerText = "รหัส: " + item['Item Code'];
-                    document.getElementById('resCode').dataset.code = item['Item Code'];
-                    document.getElementById('resCategory').innerText = item['Category'];
-                    document.getElementById('resBranch').innerText = item['Branch'];
-                    document.getElementById('resMachineNo').innerText = item['MachineNo'] || '1';
-                    document.getElementById('resSpec').value = item['Spec'] || '';
-                    document.getElementById('resNote').value = item['Note'] || '';
-                    const rc = document.getElementById('resQrcode');
-                    rc.innerHTML = "";
-                    new QRCode(rc, { text: item['Item Code'], width: 140, height: 140 });
-                    document.getElementById('resQrName').innerText = item['Item Name'];
-                    document.getElementById('resQrCode').innerText = item['Item Code'];
-                    document.getElementById('searchResultCard').classList.remove('hidden');
-                } else { document.getElementById('notFoundMsg').classList.remove('hidden'); }
-            }, 300);
+
+                if (result) {
+                    displaySearchResult(result);
+                } else {
+                    document.getElementById('notFoundMsg').classList.remove('hidden');
+                }
+            }, 300); // Simulate slight loading delay
         }
 
-        function startScanner() {
-            const container = document.getElementById('scannerContainer');
+        function displaySearchResult(data) {
+            currentUpdateCode = data['Item Code'];
+
+            document.getElementById('resName').innerText = data['Item Name'] || "-";
+            document.getElementById('resCode').innerText = "SKU: " + data['Item Code'];
+            document.getElementById('resCategory').innerText = data['Category'] || "-";
+            document.getElementById('resBranch').innerText = data['Branch'] || "-";
+            document.getElementById('resMachineNo').innerText = data['MachineNo'] || "-";
+            document.getElementById('resWarrantyDate').innerText = data['WarrantyDate'] || "-";
+            document.getElementById('resTimestamp').innerText = data['Timestamp'] || "-";
+            
+            document.getElementById('resSpec').value = data['Spec'] || "";
+            document.getElementById('resNote').value = data['Note'] || "";
+
+            // Generate QR for Search Result
+            const container = document.getElementById('resQrcode');
+            container.innerHTML = "";
+            // ปรับขนาด QR Code บนหน้าจอให้พอดีกับกรอบ 3x5
+            new QRCode(container, { text: data['Item Code'], width: 90, height: 90 });
+            document.getElementById('resQrName').innerText = data['Item Name'] || "";
+            document.getElementById('resQrCode').innerText = data['Item Code'];
+
+            document.getElementById('searchResultCard').classList.remove('hidden');
+        }
+
+        // --- Branch Filter Logic ---
+        function filterByBranch() {
+            const branch = document.getElementById('searchBranchFilter').value;
+            const container = document.getElementById('multiResultContainer');
+            
+            // Clear text search
+            document.getElementById('searchInput').value = "";
+            document.getElementById('searchResultCard').classList.add('hidden');
+            document.getElementById('notFoundMsg').classList.add('hidden');
+            
+            if(!branch) {
+                container.classList.add('hidden');
+                container.classList.remove('flex');
+                return;
+            }
+
+            const results = inventoryCache.filter(item => item['Branch'] === branch);
+            
+            if(results.length === 0) {
+                container.classList.add('hidden');
+                container.classList.remove('flex');
+                document.getElementById('notFoundMsg').classList.remove('hidden');
+                return;
+            }
+
+            container.innerHTML = `<div class="text-xs text-gray-500 mb-1 px-1">พบ ${results.length} รายการในสาขา: <strong class="text-green-700">${branch}</strong></div>`;
+            results.forEach(item => {
+                container.innerHTML += `
+                    <div onclick="viewItemDetails('${item['Item Code']}')" class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm flex justify-between items-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                        <div>
+                            <div class="font-bold text-gray-800 text-sm">${item['Item Name'] || '-'}</div>
+                            <div class="text-xs text-gray-500 mt-1"><i class="fas fa-barcode mr-1"></i> ${item['Item Code']} <span class="mx-1 text-gray-300">|</span> <i class="fas fa-desktop mr-1"></i> เครื่องที่: ${item['MachineNo'] || '-'}</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                `;
+            });
+            
             container.classList.remove('hidden');
-            html5QrcodeScanner = new Html5Qrcode("reader");
-            html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (text) => {
-                stopScanner(); findItem(text); document.getElementById('searchInput').value = text;
-            }).then(() => isScannerRunning = true);
+            container.classList.add('flex');
+        }
+
+        function viewItemDetails(code) {
+            const result = inventoryCache.find(item => item['Item Code'] === code);
+            if(result) {
+                document.getElementById('multiResultContainer').classList.add('hidden');
+                document.getElementById('multiResultContainer').classList.remove('flex');
+                displaySearchResult(result);
+            }
+        }
+
+        // --- SCANNER LOGIC ---
+        function startScanner() {
+            document.getElementById('scannerContainer').classList.remove('hidden');
+            if(!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5Qrcode("reader");
+            }
+            
+            isScannerRunning = true;
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, 
+                { fps: 10, qrbox: {width: 250, height: 250} },
+                (decodedText) => {
+                    stopScanner();
+                    searchInput.value = decodedText;
+                    manualSearch();
+                    showToast("สแกนสำเร็จ!", "green");
+                },
+                (errorMessage) => {
+                    // Ignore scan errors while scanning
+                }
+            ).catch(err => {
+                console.error(err);
+                showToast("ไม่สามารถเปิดกล้องได้", "red");
+                stopScanner();
+            });
         }
 
         function stopScanner() {
-            if (html5QrcodeScanner && isScannerRunning) {
-                html5QrcodeScanner.stop().then(() => { html5QrcodeScanner.clear(); document.getElementById('scannerContainer').classList.add('hidden'); isScannerRunning = false; });
-            } else { document.getElementById('scannerContainer').classList.add('hidden'); }
+            if(isScannerRunning && html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    isScannerRunning = false;
+                    document.getElementById('scannerContainer').classList.add('hidden');
+                }).catch(err => console.error(err));
+            } else {
+                document.getElementById('scannerContainer').classList.add('hidden');
+            }
         }
 
-        function openPinModal(cb) { onPinSuccess = cb; document.getElementById('pinModal').classList.remove('hidden'); document.getElementById('pinInput').focus(); }
-        function closePinModal() { document.getElementById('pinModal').classList.add('hidden'); document.getElementById('pinInput').value = ""; }
-        function confirmPin() { 
-            if(document.getElementById('pinInput').value === "224339") { closePinModal(); onPinSuccess(); } 
-            else { showToast("PIN ผิด", "red"); document.getElementById('pinInput').value = ""; }
+        // --- PRINT LOGIC ---
+        function printBarcode() {
+            printElement('stickerLabel');
         }
 
-        function triggerUpdateWithPin() { openPinModal(performUpdate); }
-        async function performUpdate() {
-            const code = document.getElementById('resCode').dataset.code;
-            const data = new URLSearchParams({ action:'update', code:code, note:document.getElementById('resNote').value, spec:document.getElementById('resSpec').value });
+        function printBarcodeSearch() {
+            printElement('stickerLabelSearch');
+        }
+
+        function printElement(elementId) {
+            const container = document.getElementById(elementId);
+            
+            // ดึงข้อความชื่อและรหัสออกมา
+            const nameText = container.querySelector('p:nth-of-type(1)').innerText;
+            const codeText = container.querySelector('p:nth-of-type(2)').innerText;
+            
+            // ดึงรูปภาพ QR Code ที่สร้างเสร็จแล้ว (เป็น Base64)
+            let qrDataUrl = '';
+            const canvas = container.querySelector('canvas');
+            const img = container.querySelector('img');
+            if (canvas) {
+                qrDataUrl = canvas.toDataURL("image/png");
+            } else if (img && img.src) {
+                qrDataUrl = img.src;
+            }
+
+            const originalWindow = window.open('', '', 'width=800,height=600');
+            originalWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Print QR Code</title>
+                    <style>
+                        @page { 
+                            size: A4 portrait; 
+                            margin: 0; /* ลบ Margin ออกทั้งหมดให้ชิดขอบกระดาษ */
+                        }
+                        body { 
+                            margin: 0; 
+                            padding: 0; 
+                            font-family: sans-serif; 
+                            background: #fff;
+                        }
+                        .page-container {
+                            width: 210mm;
+                            height: 297mm;
+                            box-sizing: border-box;
+                            /* ชิดขอบบนซ้ายของ A4 (สามารถปรับค่าตรงนี้ได้หากปริ้นเตอร์กินขอบ) */
+                            padding-top: 0mm; 
+                            padding-left: 0mm;
+                        }
+                        .sticker { 
+                            width: 3cm; /* ความกว้าง 3 เซนติเมตร */
+                            height: auto; /* ปรับความสูงให้พอดีกับข้อมูลอัตโนมัติ */
+                            border: 1px solid #000; 
+                            border-radius: 4px; /* มุมมนเล็กน้อย */
+                            display: flex; 
+                            flex-direction: column; 
+                            justify-content: center; 
+                            align-items: center; 
+                            box-sizing: border-box; 
+                            padding: 2mm; /* ช่องว่างระหว่างเส้นขอบกับข้อมูล */
+                        }
+                        .name { 
+                            font-weight: bold; 
+                            font-size: 11px; 
+                            margin-bottom: 2px; 
+                            text-align: center; 
+                            line-height: 1.1;
+                            word-wrap: break-word;
+                            max-width: 100%;
+                        }
+                        .qr-container { 
+                            display: flex; 
+                            justify-content: center; 
+                            margin-bottom: 2px; 
+                        }
+                        .qr-container img {
+                            width: 2.2cm;
+                            height: 2.2cm;
+                            object-fit: contain;
+                        }
+                        .code { 
+                            font-size: 10px; 
+                            text-align: center; 
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="page-container">
+                        <div class="sticker">
+                            <div class="name">${nameText}</div>
+                            <div class="qr-container">
+                                <img src="${qrDataUrl}" />
+                            </div>
+                            <div class="code">${codeText}</div>
+                        </div>
+                    </div>
+                    <script>
+                        setTimeout(() => {
+                            window.print();
+                            window.close();
+                        }, 500);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            originalWindow.document.close();
+        }
+
+        // --- PIN & UPDATE LOGIC ---
+        function triggerUpdateWithPin() {
+            openPinModal(() => {
+                submitUpdate();
+            });
+        }
+
+        function openPinModal(successCallback) {
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinModal').classList.remove('hidden');
+            document.getElementById('pinInput').focus();
+            onPinSuccess = successCallback;
+        }
+
+        function closePinModal() {
+            document.getElementById('pinModal').classList.add('hidden');
+            onPinSuccess = null;
+        }
+
+        function confirmPin() {
+            const pin = document.getElementById('pinInput').value;
+            if(pin.length < 4) {
+                showToast("กรุณาใส่ PIN ให้ครบถ้วน", "red");
+                return;
+            }
+            // In a real scenario, the backend should validate the PIN.
+            // Here we just accept it and pass it to the callback.
+            closePinModal();
+            if(onPinSuccess) {
+                onPinSuccess(pin);
+            }
+        }
+
+        async function submitUpdate() {
+            const btn = document.getElementById('updateBtn');
+            const originalText = btn.innerHTML;
+            
+            const newSpec = document.getElementById('resSpec').value.trim();
+            const newNote = document.getElementById('resNote').value.trim();
+            const pin = document.getElementById('pinInput').value;
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            const data = new URLSearchParams();
+            data.append('action', 'update');
+            data.append('Item Code', currentUpdateCode);
+            data.append('Spec', newSpec);
+            data.append('Note', newNote);
+            data.append('pin', pin);
+
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: data });
+                // ส่งข้อมูลอัปเดตไปยัง Google Sheet ของจริง
+                const res = await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: data
+                });
                 const json = await res.json();
-                if(json.result === 'success') { showToast("อัปเดตข้อมูลแล้ว", "green"); loadAllDataForSearch(); }
-            } catch(e) { showToast("อัปเดตไม่สำเร็จ", "red"); }
+
+                if(json.result === 'success') {
+                    showToast("อัปเดตข้อมูลสำเร็จ!", "green");
+                    
+                    // Update Local Cache
+                    const itemIndex = inventoryCache.findIndex(i => i['Item Code'] === currentUpdateCode);
+                    if(itemIndex > -1) {
+                        inventoryCache[itemIndex]['Spec'] = newSpec;
+                        inventoryCache[itemIndex]['Note'] = newNote;
+                    }
+
+                } else {
+                    throw new Error(json.error || "Update Failed");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("อัปเดตไม่สำเร็จ: " + err.message, "red");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
-        function manualSearch() { findItem(document.getElementById('searchInput').value); }
+
     </script>
 </body>
 </html>
