@@ -29,8 +29,8 @@
         <!-- Header: Green -->
         <div class="bg-green-600 p-5 flex justify-between items-center">
             <div>
-                <h1 class="text-white text-xl font-bold">ระบบลงทะเบียนอุปกรณ์-Salaosot</h1>
-                <p class="text-green-100 text-xs">QR Code Inventory System (Ver 1.2.0)</p>
+                <h1 class="text-white text-xl font-bold">ระบบลงทะเบียนอุปกรณ์-SALA-IVENTORY</h1>
+                <p class="text-green-100 text-xs">SALA-IVENTORY System (Ver 1.2.1)</p>
             </div>
             <!-- Status Indicator -->
             <div class="text-white opacity-80 text-xs">
@@ -45,15 +45,15 @@
         </div>
 
         <!-- Instruction Text Section (Improved Aesthetics) -->
-        <div class="px-6 pt-4 pb-2">
-            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-1.5 items-center">
+        <!-- ปรับ pb-2 เป็น pb-0 เพื่อลดระยะห่างด้านล่าง -->
+        <div class="px-4 pt-4 pb-0">
+            <div class="bg-gray-50 p-1 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-1.0 items-center">
                 <p class="text-[13px] text-gray-600 font-medium leading-tight">
-                    <span class="text-indigo-600">หมวดหมู่</span>-<span class="text-indigo-600">สาขา</span>-<span class="text-indigo-600">วันที่</span>-<span class="text-indigo-600">เครื่อง</span>
+                    <span class="text-indigo-600">วิธีการอ่านรหัส: หมวดหมู่</span>-<span class="text-indigo-600">สาขา</span>-<span class="text-indigo-600">วันที่</span>-<span class="text-indigo-600">เครื่อง</span>
                 </p>
                 <p class="text-[13px] text-gray-700">
-                    ตัวอย่าง: <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100 ml-1">PC102026012101</span>
+                    ตัวอย่าง: <span class="font-bold text-indigo-700 bg-indigo-50 px-1 py-0.2 rounded border border-indigo-100 ml-1">PC-10-20260121-01</span>
                 </p>
-                <div class="w-full h-px bg-gray-200 my-1"></div>
                 <a href="https://www.canva.com/design/DAHEp7RT3DU/UkJlOgn5b4Mez0gDA1YymA/edit" 
                    target="_blank" 
                    class="flex items-center text-[12px] text-indigo-600 hover:text-indigo-800 transition-colors font-bold">
@@ -62,7 +62,6 @@
                 </a>
             </div>
         </div>
-
         <div class="p-6 pt-2">
             <form id="itemForm" class="space-y-4">
                 <input type="hidden" name="action" value="register">
