@@ -12,15 +12,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
         .form-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; outline: none; transition: all 0.2s; }
-        /* Focus color: Green-600 (#16a34a) */
         .form-input:focus { border-color: #16a34a; box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2); }
-        /* Error Input Style */
         .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
         .tab-btn { padding: 10px; flex: 1; text-align: center; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 600; color: #6b7280; }
-        /* Active tab color: Green-600 */
         .tab-btn.active { border-bottom-color: #16a34a; color: #16a34a; }
         #reader video { object-fit: cover; border-radius: 0.5rem; }
-        /* Scrollbar for suggestions */
         .suggestion-list::-webkit-scrollbar { width: 6px; }
         .suggestion-list::-webkit-scrollbar-track { background: #f1f1f1; }
         .suggestion-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -47,32 +43,27 @@
             <div id="tabRegister" onclick="switchTab('register')" class="tab-btn active"><i class="fas fa-plus-circle mr-1"></i> ลงทะเบียน</div>
             <div id="tabSearch" onclick="switchTab('search')" class="tab-btn"><i class="fas fa-search mr-1"></i> ค้นหา/แก้ไข</div>
         </div>
-       <!-- Instruction Text -->
-    <!-- Instruction Text - Compact Version -->
-    <div class="inline-block w-full max-w-sm text-sm text-gray-700 font-medium bg-gray-50 p-3 rounded-lg border border-gray-200 shadow-sm">
-        <p class="mb-1 text-xs sm:text-sm">
-            วิธีการอ่านรหัส: 
-            <span class="text-indigo-600">หมวดหมู่</span>- 
-            <span class="text-indigo-600">สาขา</span>- 
-            <span class="text-indigo-600">วันที่</span>- 
-            <span class="text-indigo-600">เครื่อง</span>
-        </p>
-        
-        <p class="mb-2 text-xs sm:text-sm">
-            ตัวอย่าง: <span class="font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded ml-1">PC102026012101</span>
-        </p>
 
-        <div class="pt-2 border-t border-gray-200 mt-1">
-            <a href="https://www.canva.com/design/DAHEp7RT3DU/UkJlOgn5b4Mez0gDA1YymA/edit" 
-               target="_blank" 
-               class="inline-flex items-center text-xs sm:text-sm text-indigo-600 hover:text-indigo-800 transition-all font-semibold decoration-1 underline-offset-4 hover:underline">
-                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                </svg>
-                คลิกเพื่อดูวิธีการใช้งานอย่างละเอียด
-            </a>
+        <!-- Instruction Text Section (Improved Aesthetics) -->
+        <div class="px-6 pt-4 pb-2">
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-1.5 items-center">
+                <p class="text-[13px] text-gray-600 font-medium leading-tight">
+                    <span class="text-indigo-600">หมวดหมู่</span>-<span class="text-indigo-600">สาขา</span>-<span class="text-indigo-600">วันที่</span>-<span class="text-indigo-600">เครื่อง</span>
+                </p>
+                <p class="text-[13px] text-gray-700">
+                    ตัวอย่าง: <span class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100 ml-1">PC102026012101</span>
+                </p>
+                <div class="w-full h-px bg-gray-200 my-1"></div>
+                <a href="https://www.canva.com/design/DAHEp7RT3DU/UkJlOgn5b4Mez0gDA1YymA/edit" 
+                   target="_blank" 
+                   class="flex items-center text-[12px] text-indigo-600 hover:text-indigo-800 transition-colors font-bold">
+                    <i class="fas fa-external-link-alt mr-1.5 text-[10px]"></i>
+                    คลิกเพื่อดูวิธีการใช้งานอย่างละเอียด
+                </a>
+            </div>
         </div>
-    </div>
+
+        <div class="p-6 pt-2">
             <form id="itemForm" class="space-y-4">
                 <input type="hidden" name="action" value="register">
 
@@ -160,7 +151,6 @@
                 </button>
             </div>
         </div>
-
         <!-- ================= PAGE 2: SEARCH & UPDATE ================= -->
         <div id="searchView" class="hidden p-6 space-y-4">
             
